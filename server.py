@@ -7,11 +7,17 @@ mcp = FastMCP(name="TwitterMCPServer")
 
 # Initialize the client
 client = Client(
-    api_key=os.getenv("TWITTER_API_KEY"),
-    api_secret=os.getenv("TWITTER_API_SECRET"),
-    access_token=os.getenv("TWITTER_ACCESS_TOKEN_SECRET"),
-    access_token_secret=os.getenv("TWITTER_ACCESS_TOKEN_SECRET"),
+    token={
+        "oauth_token": os.getenv("TWITTER_ACCESS_TOKEN"),           # this is the access_token
+        "oauth_token_secret": os.getenv("TWITTER_ACCESS_TOKEN_SECRET"),
+        "consumer_key": os.getenv("TWITTER_API_KEY"),
+        "consumer_secret": os.getenv("TWITTER_API_SECRET"),
+        "access_token": os.getenv("TWITTER_ACCESS_TOKEN_SECRET")       
+    }
+    scope="tweet.read tweet.write users.read",
     bearer_token=os.getenv("TWITTER_BEARER_TOKEN"),
+    client_id=os.getenv("TWITTER_CLIENT_ID"),        # or API Key
+    client_secret=os.getenv("TWITTER_CLIENT_SECRET"),
     redirect_uri="https://oauth.pstmn.io/v1/browser-callback"
 )
 
