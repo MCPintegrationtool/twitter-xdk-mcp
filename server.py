@@ -1,6 +1,7 @@
 from fastmcp import FastMCP
 from xdk import Client
 import os
+from typing import List, Dict, Any  # For type hints
 
 # Create a basic server instance
 mcp = FastMCP(name="TwitterMCPServer")
