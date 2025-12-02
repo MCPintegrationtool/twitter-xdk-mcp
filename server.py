@@ -13,7 +13,7 @@ client = Client(
         "consumer_key": os.getenv("TWITTER_API_KEY"),
         "consumer_secret": os.getenv("TWITTER_API_SECRET"),
         "access_token": os.getenv("TWITTER_ACCESS_TOKEN_SECRET")       
-    }
+    },
     scope="tweet.read tweet.write users.read",
     bearer_token=os.getenv("TWITTER_BEARER_TOKEN"),
     client_id=os.getenv("TWITTER_CLIENT_ID"),        # or API Key
