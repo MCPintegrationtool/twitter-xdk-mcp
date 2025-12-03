@@ -37,8 +37,8 @@ def print_xdk_version() -> str:
 def get_auth_url() -> str:
     auth = OAuth2PKCEAuth(
         base_url="https://x.com/i",
-        client_id=client.client_id,
-        redirect_uri=client.redirect_uri,
+        client_id=os.getenv("TWITTER_CLIENT_ID"),
+        redirect_uri="https://oauth.pstmn.io/v1/browser-callback,
         scope= "tweet.read tweet.write users.read offline.access"
     )
     auth_url, state = auth.get_authorization_url()
