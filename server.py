@@ -52,7 +52,7 @@ def fetch_auth_token(code: str) -> str:
         redirect_uri="https://oauth.pstmn.io/v1/browser-callback",
         scope= "tweet.read tweet.write users.read offline.access"
     )
-    tokens = auth.fetch_token(authorization_code=code)
+    tokens = auth.fetch_token(authorization_response=code)
     access_token = tokens["access_token"]
     refresh_token = tokens["refresh_token"]  # Store for renewal
     return f"Tokens: access {access_token} refresh {refresh_token}"
