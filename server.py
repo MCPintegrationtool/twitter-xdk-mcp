@@ -4,6 +4,8 @@ import os
 from typing import List, Dict, Any  # For type hints
 import xdk
 from xdk.posts.models import CreateRequest
+from xdk.oauth2_auth import OAuth2PKCEAuth
+from urllib.parse import urlparse
 # Create a basic server instance
 mcp = FastMCP(name="TwitterMCPServer")
 
@@ -30,6 +32,17 @@ def greet(name: str) -> str:
 @mcp.tool(name="get_xdk_version", description="Print XDK version")
 def print_xdk_version() -> str:
     return f"XDK version: {xdk.__version__}"
+
+@mcp.tool(name="get_auth_url", description="Get auth URL")
+def get_auth_url() -> str:
+    auth = OAuth2PKCEAuth(
+        base_url="https://x.com/i",
+        client_id=client.client_id,
+        redirect_uri=client.redirect_uri,
+        scope= "tweet.read tweet.write users.read offline.access"
+    )
+    auth_url, state = auth.get_authorization_url()
+    return f"Visit this URL to authorize: {auth_url}"
 
 @mcp.tool(name="get_tweet_content", description="Get content of posts by ids")
 def get_tweet_content(id: str):
