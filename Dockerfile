@@ -10,7 +10,7 @@ RUN apt-get update \
 # Install Python dependencies
 #COPY requirements.txt ./
 RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir "mcp[cli]" fastmcp xdk
+    && pip install --no-cache-dir "mcp[cli]" fastmcp xdk-python
 
 # Optional: install uv tool if you want to run server via uv
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
