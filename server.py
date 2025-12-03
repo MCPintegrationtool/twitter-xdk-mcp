@@ -44,6 +44,19 @@ def get_auth_url() -> str:
     auth_url, state = auth.get_authorization_url()
     return f"Visit this URL to authorize: {auth_url}"
 
+@mcp.tool(name="fetch_auth_token", description="Fetch auth token")
+def fetch_auth_token(code: str) -> str:
+    auth = OAuth2PKCEAuth(
+        base_url="https://x.com/i",
+        client_id=os.getenv("TWITTER_CLIENT_ID"),
+        redirect_uri="https://oauth.pstmn.io/v1/browser-callback",
+        scope= "tweet.read tweet.write users.read offline.access"
+    )
+    tokens = auth.fetch_token(authorization_code=code)
+    access_token = tokens["access_token"]
+    refresh_token = tokens["refresh_token"]  # Store for renewal
+    return f"Tokens: access {access_token} refresh {refresh_token}"
+
 @mcp.tool(name="get_tweet_content", description="Get content of posts by ids")
 def get_tweet_content(id: str):
     posts = client.posts.get_by_id(id=id)
