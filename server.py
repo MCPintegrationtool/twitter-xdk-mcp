@@ -42,12 +42,14 @@ def print_xdk_version() -> str:
 
 @mcp.tool(name="get_auth_url", description="Get auth URL")
 def get_auth_url() -> str:
+    global auth
     auth_url, state = auth.get_authorization_url()
     return f"Visit this URL to authorize: {auth_url}"
 
 @mcp.tool(name="fetch_auth_token", description="Fetch auth token")
 def fetch_auth_token(code: str) -> str:
-    global client
+    global client, auth
+    auth.base_url = "https://api.x.com"
     tokens = auth.fetch_token(authorization_response=code)
     access_token = tokens["access_token"]
     refresh_token = tokens["refresh_token"]  # Store for renewal
@@ -68,6 +70,11 @@ def fetch_auth_token(code: str) -> str:
     )
     #client = Client(oauth2_access_token=access_token)
     return f"Tokens: access {access_token} refresh {refresh_token}"
+
+@mcp.tool(name="get_base_url", description="Get base URL")
+def get_base_url() -> str:
+    global auth
+    return auth.base_url
 
 @mcp.tool(name="get_tweet_content", description="Get content of posts by ids")
 def get_tweet_content(id: str):
