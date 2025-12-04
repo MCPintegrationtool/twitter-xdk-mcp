@@ -31,7 +31,10 @@ auth = OAuth2PKCEAuth(
     client_id=os.getenv("TWITTER_CLIENT_ID"),
     client_secret=os.getenv("TWITTER_CLIENT_SECRET"),
     redirect_uri="https://oauth.pstmn.io/v1/browser-callback",
-    scope= "tweet.read tweet.write users.read offline.access"
+    scope= "tweet.read tweet.write users.read offline.access",
+    token={
+        "access_token": os.getenv("TWITTER_ACCESS_TOKEN_SECRET")       
+    }    
 )
 
 @mcp.tool(name="greet", description="Greet a user by name")
@@ -98,6 +101,10 @@ def custom_auth_token(authorization_response: str) -> Dict[str, Any]:
         }
     )
     return token
+
+@mcp.tool(name="print_oauth_session", description="Print OAuth Session")
+def print_oauth_session():
+    return str(auth.oauth2_session)
 
 @mcp.tool(name="get_base_url", description="Get base URL")
 def get_base_url() -> str:
