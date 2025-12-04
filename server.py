@@ -47,10 +47,13 @@ def get_auth_url() -> str:
     return f"Visit this URL to authorize: {auth_url}"
 
 @mcp.tool(name="fetch_auth_token", description="Fetch auth token")
-def fetch_auth_token(code: str) -> str:
+def fetch_auth_token(url: str) -> str: # url/code
     global client, auth
     auth.base_url = "https://api.x.com"
-    tokens = auth.fetch_token(authorization_response=code)
+    try:
+        tokens = auth.fetch_token(authorization_response=url)
+    except Exception as e:
+        return f"Auth token retrieve failed: {str(e)}"
     access_token = tokens["access_token"]
     refresh_token = tokens["refresh_token"]  # Store for renewal
     client = Client(
