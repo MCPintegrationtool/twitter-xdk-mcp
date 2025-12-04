@@ -5,6 +5,7 @@ from typing import List, Dict, Any  # For type hints
 import xdk
 from xdk.posts.models import CreateRequest
 from xdk.oauth2_auth import OAuth2PKCEAuth
+import base64
 #from urllib.parse import urlparse
 # Create a basic server instance
 mcp = FastMCP(name="TwitterMCPServer")
@@ -28,6 +29,7 @@ client = Client(
 auth = OAuth2PKCEAuth(
     base_url="https://x.com/i",
     client_id=os.getenv("TWITTER_CLIENT_ID"),
+    client_secret=os.getenv("TWITTER_CLIENT_SECRET"),
     redirect_uri="https://oauth.pstmn.io/v1/browser-callback",
     scope= "tweet.read tweet.write users.read offline.access"
 )
@@ -50,10 +52,11 @@ def get_auth_url() -> str:
 def fetch_auth_token(url: str) -> str: # url/code
     global client, auth
     auth.base_url = "https://api.x.com"
-    try:
-        tokens = auth.fetch_token(authorization_response=url)
-    except Exception as e:
-        return f"Auth token retrieve failed: {str(e)}"
+    tokens = auth.fetch_token(authorization_response=url)
+    # try:
+    #     tokens = auth.fetch_token(authorization_response=url)
+    # except Exception as e:
+    #     return f"Auth token retrieve failed: {str(e)}"
     access_token = tokens["access_token"]
     refresh_token = tokens["refresh_token"]  # Store for renewal
     client = Client(
@@ -73,6 +76,28 @@ def fetch_auth_token(url: str) -> str: # url/code
     )
     #client = Client(oauth2_access_token=access_token)
     return f"Tokens: access {access_token} refresh {refresh_token}"
+
+@mcp.tool(name="custom_auth_token", description="Custom auth token")
+def custom_auth_token(authorization_response: str) -> Dict[str, Any]:
+    global auth
+    auth.base_url = "https://api.x.com"
+    # build basic auth header
+    ids = f"{os.getenv('TWITTER_CLIENT_ID')}:{os.getenv('TWITTER_CLIENT_SECRET')}"
+    basic = base64.b64encode(ids.encode()).decode()
+    token = auth.oauth2_session.fetch_token(
+        token_url=f"{auth.base_url}/2/oauth2/token",
+        authorization_response=authorization_response,
+        code_verifier=auth.code_verifier,
+        # DO NOT pass include_client_id=True for confidential clients
+        client_id=os.getenv('TWITTER_CLIENT_ID'),
+        client_secret=os.getenv("TWITTER_CLIENT_SECRET"),
+        headers={
+            "Authorization": f"Basic {basic}",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Accept": "application/json"
+        }
+    )
+    return token
 
 @mcp.tool(name="get_base_url", description="Get base URL")
 def get_base_url() -> str:
