@@ -45,8 +45,8 @@ def get_auth_url() -> str:
     auth_url, state = auth.get_authorization_url()
     return f"Visit this URL to authorize: {auth_url}"
 
-@mcp.tool(name="fetch_auth_token", description="Fetch auth token")
-def fetch_auth_token(code: str) -> str:
+@mcp.tool(name="fetch_auth_token_version_a", description="Fetch auth token")
+def fetch_auth_token_version_a(code: str) -> str:
     global client
     tokens = auth.fetch_token(authorization_response=code)
     access_token = tokens["access_token"]
@@ -65,6 +65,31 @@ def fetch_auth_token(code: str) -> str:
         client_id=os.getenv("TWITTER_CLIENT_ID"),        # or API Key
         client_secret=os.getenv("TWITTER_CLIENT_SECRET"),
         redirect_uri="https://oauth.pstmn.io/v1/browser-callback"
+    )
+    #client = Client(oauth2_access_token=access_token)
+    return f"Tokens: access {access_token} refresh {refresh_token}"
+
+@mcp.tool(name="fetch_auth_token_version_b", description="Fetch auth token")
+def fetch_auth_token_version_b(code: str) -> str:
+    global client
+    tokens = auth.fetch_token(authorization_response=code)
+    access_token = tokens["access_token"]
+    refresh_token = tokens["refresh_token"]  # Store for renewal
+    client = Client(
+        token={
+            "oauth_token": os.getenv("TWITTER_ACCESS_TOKEN"),           # this is the access_token
+            "oauth_token_secret": os.getenv("TWITTER_ACCESS_TOKEN_SECRET"),
+            "consumer_key": os.getenv("TWITTER_API_KEY"),
+            "consumer_secret": os.getenv("TWITTER_API_SECRET"),
+            "access_token": access_token, #os.getenv("TWITTER_ACCESS_TOKEN_SECRET")
+            "token_type": "Bearer"
+        },
+        scope="tweet.read tweet.write users.read offline.access",
+        bearer_token=os.getenv("TWITTER_BEARER_TOKEN"),
+        client_id=os.getenv("TWITTER_CLIENT_ID"),        # or API Key
+        client_secret=os.getenv("TWITTER_CLIENT_SECRET"),
+        redirect_uri="https://oauth.pstmn.io/v1/browser-callback",
+        oauth2_access_token=access_token
     )
     #client = Client(oauth2_access_token=access_token)
     return f"Tokens: access {access_token} refresh {refresh_token}"
