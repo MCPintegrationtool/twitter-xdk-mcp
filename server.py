@@ -48,7 +48,7 @@ def print_xdk_version() -> str:
 @mcp.tool(name="get_auth_url", description="Get auth URL")
 def get_auth_url() -> str:
     global auth
-    auth_url, state = auth.get_authorization_url()
+    auth_url = auth.get_authorization_url()
     return f"Visit this URL to authorize: {auth_url}"
 
 @mcp.tool(name="fetch_auth_token", description="Fetch auth token")
@@ -62,21 +62,21 @@ def fetch_auth_token(url: str) -> str: # url/code
     #     return f"Auth token retrieve failed: {str(e)}"
     access_token = tokens["access_token"]
     refresh_token = tokens["refresh_token"]  # Store for renewal
-    client = Client(
-        token={
-            "oauth_token": os.getenv("TWITTER_ACCESS_TOKEN"),           # this is the access_token
-            "oauth_token_secret": os.getenv("TWITTER_ACCESS_TOKEN_SECRET"),
-            "consumer_key": os.getenv("TWITTER_API_KEY"),
-            "consumer_secret": os.getenv("TWITTER_API_SECRET"),
-            "access_token": access_token, #os.getenv("TWITTER_ACCESS_TOKEN_SECRET")
-            "token_type": "Bearer"
-        },
-        scope="tweet.read tweet.write users.read offline.access",
-        bearer_token=os.getenv("TWITTER_BEARER_TOKEN"),
-        client_id=os.getenv("TWITTER_CLIENT_ID"),        # or API Key
-        client_secret=os.getenv("TWITTER_CLIENT_SECRET"),
-        redirect_uri="https://oauth.pstmn.io/v1/browser-callback"
-    )
+    # client = Client(
+    #     token={
+    #         "oauth_token": os.getenv("TWITTER_ACCESS_TOKEN"),           # this is the access_token
+    #         "oauth_token_secret": os.getenv("TWITTER_ACCESS_TOKEN_SECRET"),
+    #         "consumer_key": os.getenv("TWITTER_API_KEY"),
+    #         "consumer_secret": os.getenv("TWITTER_API_SECRET"),
+    #         "access_token": access_token, #os.getenv("TWITTER_ACCESS_TOKEN_SECRET")
+    #         "token_type": "Bearer"
+    #     },
+    #     scope="tweet.read tweet.write users.read offline.access",
+    #     bearer_token=os.getenv("TWITTER_BEARER_TOKEN"),
+    #     client_id=os.getenv("TWITTER_CLIENT_ID"),        # or API Key
+    #     client_secret=os.getenv("TWITTER_CLIENT_SECRET"),
+    #     redirect_uri="https://oauth.pstmn.io/v1/browser-callback"
+    # )
     #client = Client(oauth2_access_token=access_token)
     return f"Tokens: access {access_token} refresh {refresh_token}"
 
